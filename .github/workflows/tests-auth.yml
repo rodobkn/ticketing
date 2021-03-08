@@ -1,7 +1,9 @@
 name: tests-auth
 
 on:
-  pull_request
+  pull_request:
+    paths:
+      - 'auth/**' # We will run the tests on a PR only if we make changes in the auth MS
 
 jobs:
   build:
