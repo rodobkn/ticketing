@@ -1,0 +1,19 @@
+name: deploy-auth
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'auth/**'
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 #We are checking if we have the same gitHub folders in the machine
+      - run: cd auth && docker build -t rodobkn/auth .
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker push rodobkn/auth
