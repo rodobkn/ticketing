@@ -1,0 +1,24 @@
+name: deploy-auth
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'auth/**'
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 #We are checking if we have the same gitHub folders in the machine
+      - run: cd auth && docker build -t rodobkn/auth .
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker push rodobkn/auth
+      - uses: digitalocean/action-doctl@v2 # We are installing doctl and providing credential to authentication
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing #We are attaching the connection to the digitalocean cluster
+      - run: kubectl rollout restart deployment auth-depl # We are inside of the digitaloean Cluster, and we tell to the "auth-depl" to restart itself with the updated image 
