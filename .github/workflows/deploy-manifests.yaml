@@ -1,0 +1,18 @@
+name: deploy-manifests
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'infra/**'
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 #We are checking if we have the same gitHub folders in the machine
+      - uses: digitalocean/action-doctl@v2 # We are installing doctl and providing credential to authentication
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing #We are attaching the connection to the digitalocean cluster
+      - run: kubectl apply -f infra/k8s
