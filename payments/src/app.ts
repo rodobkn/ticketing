@@ -15,7 +15,8 @@ app.use(
     signed: false,
     //We will allow to use the cookie only in https (secure connections)
     //Besides, in the test environment we will not do https requests. For this reason el env variable
-    secure: process.env.NODE_ENV !== 'test',
+    // secure: process.env.NODE_ENV !== 'test',
+    secure: false, //This is for the prod environment, because we don't hace the HTTPS setup in prod
   })
 );
 
